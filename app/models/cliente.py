@@ -12,6 +12,4 @@ class Cliente(Base):
     correo = Column(String(100))
     telefono = Column(String(20))
 
-    reservas = relationship("Reserva", back_populates="clientes")
-
-
+    reservas = relationship("Reserva", back_populates="cliente")
