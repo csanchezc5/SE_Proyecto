@@ -1,0 +1,6 @@
+
+cd hotel-reservas-frontend
+
+npm install axios react-router-dom
+
+npm start 
