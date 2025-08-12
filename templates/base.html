@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hotel - Sistema de Reservas{% endblock %}</title>
+    
+    <!-- CSS Base -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    
+    <!-- CSS específico de cada página -->
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="{{ url_for('index') }}" class="logo">HOTEL</a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}" class="nav-link" data-page="index">Inicio</a></li>
+                <li><a href="{{ url_for('reservas') }}" class="nav-link" data-page="reservas">Reservas</a></li>
+                <li><a href="{{ url_for('habitaciones') }}" class="nav-link" data-page="habitaciones">Habitaciones</a></li>
+                <li><a href="{{ url_for('clientes') }}" class="nav-link" data-page="clientes">Clientes</a></li>
+                <li><a href="{{ url_for('usuarios') }}" class="nav-link" data-page="usuarios">Usuarios</a></li>
+            </ul>
+        </div>
+       
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Contenedor de notificaciones -->
+    <div id="notifications-container"></div>
+
+    <!-- JavaScript Base -->
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    
+    <!-- JavaScript específico de cada página -->
+    {% block js %}{% endblock %}
+    
+    <!-- Script para marcar página activa -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = '{{ request.endpoint }}';
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
