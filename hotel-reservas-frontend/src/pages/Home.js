@@ -70,7 +70,7 @@ function Home() {
       setRecentReservas(reservasOrdenadas);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los datos del dashboard: ' + err.message);
+      //setError('Error al cargar los datos del dashboard: ' + err.message);
       console.error('Error:', err);
     } finally {
       setLoading(false);
@@ -111,14 +111,8 @@ function Home() {
         </div>
       </section>
 
-      {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={loadDashboardData} className="retry-btn">
-            Reintentar
-          </button>
-        </div>
-      )}
+      {error
+      }
 
       {/* Stats Dashboard */}
       <section className="stats-section">
