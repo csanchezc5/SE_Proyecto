@@ -1,5 +1,7 @@
+// pages/Habitaciones.js
 import React, { useState, useEffect } from 'react';
-import habitacionesService from '../services/habitacionesService.js';
+import habitacionesService from '../services/habitacionesService';
+import './Habitaciones.css';
 
 const Habitaciones = () => {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -11,8 +13,7 @@ const Habitaciones = () => {
     numero: '',
     tipo: '',
     precio: '',
-    estado: 'disponible',
-    descripcion: ''
+    estado: 'disponible'
   });
 
   const estados = [
@@ -43,19 +44,33 @@ const Habitaciones = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validar datos antes de enviar
+      if (!formData.numero.trim()) {
+        setError('El número de habitación es requerido');
+        return;
+      }
+      if (!formData.tipo) {
+        setError('El tipo de habitación es requerido');
+        return;
+      }
+      if (!formData.precio || parseFloat(formData.precio) <= 0) {
+        setError('El precio debe ser mayor a 0');
+        return;
+      }
+      
       await habitacionesService.crearHabitacion(formData);
       setShowModal(false);
       setFormData({
         numero: '',
         tipo: '',
         precio: '',
-        estado: 'disponible',
-        descripcion: ''
+        estado: 'disponible'
       });
       cargarHabitaciones();
+      setError(null); // Limpiar errores previos
     } catch (err) {
-      setError('Error al crear la habitación');
-      console.error(err);
+      console.error('Error completo:', err);
+      setError(err.message || 'Error al crear la habitación');
     }
   };
 
@@ -131,10 +146,7 @@ const Habitaciones = () => {
             
             <div className="space-y-2 text-sm text-gray-600">
               <p><span className="font-medium">Tipo:</span> {habitacion.tipo}</p>
-              <p><span className="font-medium">Precio:</span> ${habitacion.precio}</p>
-              {habitacion.descripcion && (
-                <p><span className="font-medium">Descripción:</span> {habitacion.descripcion}</p>
-              )}
+              <p><span className="font-medium">Precio:</span> ${habitacion.precio_noche}</p>
             </div>
 
             <div className="mt-4 space-y-2">
@@ -213,35 +225,6 @@ const Habitaciones = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Estado
-                </label>
-                <select
-                  value={formData.estado}
-                  onChange={(e) => setFormData({...formData, estado: e.target.value})}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                >
-                  {estados.map(estado => (
-                    <option key={estado.value} value={estado.value}>
-                      {estado.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descripción
-                </label>
-                <textarea
-                  value={formData.descripcion}
-                  onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  rows="3"
-                />
-              </div>
-
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
@@ -274,7 +257,7 @@ const Habitaciones = () => {
                 <span className="font-medium">Tipo:</span> {selectedHabitacion.tipo}
               </div>
               <div>
-                <span className="font-medium">Precio:</span> ${selectedHabitacion.precio}
+                <span className="font-medium">Precio:</span> ${selectedHabitacion.precio_noche}
               </div>
               <div>
                 <span className="font-medium">Estado:</span> 
@@ -282,12 +265,6 @@ const Habitaciones = () => {
                   {estados.find(e => e.value === selectedHabitacion.estado)?.label}
                 </span>
               </div>
-              {selectedHabitacion.descripcion && (
-                <div>
-                  <span className="font-medium">Descripción:</span>
-                  <p className="mt-1 text-gray-600">{selectedHabitacion.descripcion}</p>
-                </div>
-              )}
             </div>
             <div className="flex justify-end pt-4">
               <button

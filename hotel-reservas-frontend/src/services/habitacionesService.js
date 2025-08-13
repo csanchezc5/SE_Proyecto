@@ -9,8 +9,6 @@ class HabitacionesService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // Agregar token si usas autenticación
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
       });
 
@@ -28,18 +26,27 @@ class HabitacionesService {
   // POST /habitaciones/ - Crear Habitación
   async crearHabitacion(habitacionData) {
     try {
+      const dataToSend = {
+        numero: String(habitacionData.numero),
+        tipo: String(habitacionData.tipo),
+        precio_noche: parseFloat(habitacionData.precio), 
+        estado: String(habitacionData.estado || 'disponible')
+      };
+
+      console.log('Enviando datos:', dataToSend);
+
       const response = await fetch(`${API_BASE_URL}/habitaciones/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(habitacionData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
+        console.error('Error del servidor:', errorData);
+        throw new Error(errorData.detail || errorData.message || `Error ${response.status}: ${response.statusText}`);
       }
 
       return await response.json();
@@ -49,43 +56,19 @@ class HabitacionesService {
     }
   }
 
-  // GET /habitaciones/{habitacion_id} - Obtener Habitación
-  async obtenerHabitacion(habitacionId) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/habitaciones/${habitacionId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error al obtener habitación:', error);
-      throw error;
-    }
-  }
-
   // PUT /habitaciones/{habitacion_id}/estado - Actualizar Estado
   async actualizarEstado(habitacionId, nuevoEstado) {
     try {
-      const response = await fetch(`${API_BASE_URL}/habitaciones/${habitacionId}/estado`, {
+      const response = await fetch(`${API_BASE_URL}/habitaciones/${habitacionId}/estado?nuevo_estado=${nuevoEstado}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ estado: nuevoEstado }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
+        throw new Error(errorData.detail || errorData.message || `Error ${response.status}: ${response.statusText}`);
       }
 
       return await response.json();
