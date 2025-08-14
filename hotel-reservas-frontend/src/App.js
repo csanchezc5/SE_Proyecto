@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import Habitaciones from './pages/Habitaciones';
 import Reportes from './pages/Reportes';
 import Reservas from './pages/Reservas';
-
+import Clientes from './pages/Clientes';
 import './App.css';
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
           <Route path="/habitaciones" element={<Habitaciones />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/reservas" element={<Reservas />} />
+          <Route path="/clientes" element={<Clientes />} />
         </Routes>
       </div>
     </Router>
