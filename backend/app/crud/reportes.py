@@ -106,16 +106,18 @@ async def obtener_resumen_financiero(
 ) -> ResumenFinanciero:
     """Obtener resumen financiero con totales de ingresos y egresos"""
     
-    # Query para obtener totales usando SQL directo para mayor flexibilidad
+    # Query para obtener totales y cantidades
     query_ingresos = text("""
-        SELECT COALESCE(SUM(monto), 0) as total_ingresos
+        SELECT COALESCE(SUM(monto), 0) as total_ingresos,
+               COUNT(*) as cantidad_ingresos
         FROM ingresos
         WHERE (:fecha_inicio IS NULL OR fecha >= :fecha_inicio)
         AND (:fecha_fin IS NULL OR fecha <= :fecha_fin)
     """)
     
     query_egresos = text("""
-        SELECT COALESCE(SUM(monto), 0) as total_egresos
+        SELECT COALESCE(SUM(monto), 0) as total_egresos,
+               COUNT(*) as cantidad_egresos
         FROM egresos
         WHERE (:fecha_inicio IS NULL OR fecha >= :fecha_inicio)
         AND (:fecha_fin IS NULL OR fecha <= :fecha_fin)
@@ -131,8 +133,14 @@ async def obtener_resumen_financiero(
         {"fecha_inicio": fecha_inicio, "fecha_fin": fecha_fin}
     )
     
-    total_ingresos = result_ingresos.scalar() or Decimal('0')
-    total_egresos = result_egresos.scalar() or Decimal('0')
+    row_ingresos = result_ingresos.fetchone()
+    row_egresos = result_egresos.fetchone()
+    
+    total_ingresos = row_ingresos[0] if row_ingresos else Decimal('0')
+    cantidad_ingresos = row_ingresos[1] if row_ingresos else 0
+    total_egresos = row_egresos[0] if row_egresos else Decimal('0')
+    cantidad_egresos = row_egresos[1] if row_egresos else 0
+    
     saldo = total_ingresos - total_egresos
     
     # Determinar el periodo
@@ -149,7 +157,9 @@ async def obtener_resumen_financiero(
         total_ingresos=total_ingresos,
         total_egresos=total_egresos,
         saldo=saldo,
-        periodo=periodo
+        periodo=periodo,
+        cantidad_ingresos=cantidad_ingresos,
+        cantidad_egresos=cantidad_egresos
     )
 
 
