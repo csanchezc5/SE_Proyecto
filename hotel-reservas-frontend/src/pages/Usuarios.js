@@ -367,36 +367,6 @@ const Usuarios = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="quick-actions">
-        <h2>Acciones Rápidas</h2>
-        <div className="actions-grid">
-          <div className="action-card" onClick={openNewUserModal}>
-            <div className="action-icon">➕</div>
-            <h3>Nuevo Usuario</h3>
-            <p>Crear un nuevo usuario en el sistema</p>
-          </div>
-          
-          <div className="action-card">
-            <div className="action-icon">📊</div>
-            <h3>Estadísticas</h3>
-            <p>Ver estadísticas detalladas de usuarios</p>
-          </div>
-          
-          <div className="action-card">
-            <div className="action-icon">🔄</div>
-            <h3>Exportar</h3>
-            <p>Exportar lista de usuarios</p>
-          </div>
-          
-          <div className="action-card">
-            <div className="action-icon">⚙️</div>
-            <h3>Configurar</h3>
-            <p>Configurar roles y permisos</p>
-          </div>
-        </div>
-      </div>
-
       {/* Modal for Create/Edit User */}
       {showModal && (
         <div className="modal-overlay">

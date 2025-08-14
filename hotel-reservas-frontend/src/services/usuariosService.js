@@ -19,40 +19,126 @@ api.interceptors.response.use(
   }
 );
 
-export const updateUser = async (id, userData) => {
-  // Crear objeto solo con campos que tienen valor
-  const dataToSend = {};
-  
-  if (userData.nombre && userData.nombre.trim() !== '') {
-    dataToSend.nombre = userData.nombre;
-  }
-  
-  if (userData.correo && userData.correo.trim() !== '') {
-    dataToSend.correo = userData.correo;
-  }
-  
-  // Solo incluir contraseña si no está vacía
-  if (userData.contraseña && userData.contraseña.trim() !== '') {
-    dataToSend.contraseña = userData.contraseña;
-  }
-  
-  if (userData.rol_id) {
-    dataToSend.rol_id = userData.rol_id;
-  }
-  
-  const response = await fetch(`/api/usuarios/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(dataToSend) // Solo envía campos con valor
-  });
-  
-  return response.json();
-};
-
 const usuariosService = {
-  // Obtener todos los usuarios
+  // Actualizar usuario - VERSIÓN CORREGIDA
+  actualizarUsuario: async (id, userData) => {
+    try {
+      console.log('📄 Datos recibidos para actualización:', userData);
+      
+      // Validaciones del lado cliente
+      if (userData.nombre !== undefined && !userData.nombre?.trim()) {
+        throw new Error('El nombre no puede estar vacío');
+      }
+      if (userData.correo !== undefined && !userData.correo?.trim()) {
+        throw new Error('El correo no puede estar vacío');
+      }
+      
+      // Solo validar contraseña si se proporciona
+      if (userData.contraseña && userData.contraseña.trim() && userData.contraseña.length < 6) {
+        throw new Error('La contraseña debe tener al menos 6 caracteres');
+      }
+
+      // Preparar datos para enviar - SOLO campos que tienen valores válidos
+      const updateData = {};
+      
+      // Solo incluir campos que realmente necesitan actualizarse
+      if (userData.nombre && userData.nombre.trim()) {
+        updateData.nombre = userData.nombre.trim();
+      }
+      
+      if (userData.correo && userData.correo.trim()) {
+        updateData.correo = userData.correo.trim();
+      }
+      
+      // Incluir rol_id si está definido (puede ser 0)
+      if (userData.rol_id !== undefined && userData.rol_id !== null) {
+        updateData.rol_id = parseInt(userData.rol_id);
+      }
+      
+      // Solo incluir contraseña si se proporcionó Y no está vacía
+      if (userData.contraseña && userData.contraseña.trim() !== '') {
+        updateData.contraseña = userData.contraseña.trim();
+      }
+      // IMPORTANTE: NO incluir contraseña en updateData si está vacía
+
+      console.log('📤 Datos que se enviarán al backend:', updateData);
+      
+      // Verificar que hay datos para actualizar
+      if (Object.keys(updateData).length === 0) {
+        throw new Error('No hay datos válidos para actualizar');
+      }
+      
+      const response = await api.put(`/usuarios/${id}`, updateData);
+      
+      console.log('✅ Respuesta del servidor:', response.data);
+      return response.data;
+      
+    } catch (error) {
+      console.error('❌ Error al actualizar usuario:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+      
+      // Re-lanzar errores de validación del cliente
+      if (error.message.startsWith('El ') || 
+          error.message.startsWith('La ') || 
+          error.message.startsWith('No hay datos')) {
+        throw error;
+      }
+      
+      // Manejar errores específicos del servidor
+      if (error.response?.status === 422) {
+        const detail = error.response.data?.detail;
+        
+        if (Array.isArray(detail)) {
+          // Errores de validación de Pydantic
+          const errorMessages = detail.map(err => {
+            const field = err.loc ? err.loc[err.loc.length - 1] : 'campo';
+            let fieldName = field;
+            
+            // Traducir nombres de campos
+            switch (field) {
+              case 'nombre': fieldName = 'nombre'; break;
+              case 'correo': fieldName = 'correo'; break;
+              case 'contraseña': fieldName = 'contraseña'; break;
+              case 'rol_id': fieldName = 'rol'; break;
+              default: fieldName = field;
+            }
+            
+            return `${fieldName}: ${err.msg}`;
+          }).join(', ');
+          
+          throw new Error(`Error de validación: ${errorMessages}`);
+          
+        } else if (typeof detail === 'string') {
+          throw new Error(detail);
+        } else {
+          throw new Error('Error de validación. Verifica que todos los campos sean correctos.');
+        }
+      }
+      
+      if (error.response?.status === 404) {
+        throw new Error('Usuario no encontrado');
+      }
+      
+      if (error.response?.status === 409) {
+        throw new Error('El correo electrónico ya está en uso por otro usuario');
+      }
+      
+      if (error.response?.status === 400) {
+        throw new Error('Datos inválidos enviados al servidor');
+      }
+      
+      throw new Error(
+        error.response?.data?.detail || 
+        error.message || 
+        'Error desconocido al actualizar usuario'
+      );
+    }
+  },
+
+  // Resto de métodos...
   listarUsuarios: async () => {
     try {
       const response = await api.get('/usuarios/');
@@ -62,7 +148,6 @@ const usuariosService = {
     }
   },
 
-  // Obtener usuario por ID
   obtenerUsuario: async (id) => {
     try {
       const response = await api.get(`/usuarios/${id}`);
@@ -72,19 +157,6 @@ const usuariosService = {
     }
   },
 
-  // Obtener usuario por correo
-  obtenerUsuarioPorCorreo: async (correo) => {
-    try {
-      const response = await api.get(`/usuarios/por-correo/`, {
-        params: { correo }
-      });
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.detail || 'Error al obtener usuario por correo');
-    }
-  },
-
-  // Crear nuevo usuario
   crearUsuario: async (userData) => {
     try {
       // Validaciones del lado cliente
@@ -105,127 +177,18 @@ const usuariosService = {
       return response.data;
     } catch (error) {
       if (error.message.startsWith('El ') || error.message.startsWith('La ')) {
-        throw error; // Re-lanzar errores de validación
+        throw error;
       }
       throw new Error(error.response?.data?.detail || 'Error al crear usuario');
     }
   },
 
-  // Actualizar usuario
-  actualizarUsuario: async (id, userData) => {
-    try {
-      // Validaciones del lado cliente
-      if (!userData.nombre?.trim()) {
-        throw new Error('El nombre es requerido');
-      }
-      if (!userData.correo?.trim()) {
-        throw new Error('El correo es requerido');
-      }
-      if (userData.contraseña && userData.contraseña.length < 6) {
-        throw new Error('La contraseña debe tener al menos 6 caracteres');
-      }
-
-      // Preparar datos para enviar
-      const updateData = {
-        nombre: userData.nombre.trim(),
-        correo: userData.correo.trim(),
-        rol_id: userData.rol_id
-      };
-
-      // Solo incluir contraseña si se proporcionó
-      if (userData.contraseña && userData.contraseña.trim()) {
-        updateData.contraseña = userData.contraseña.trim();
-      }
-
-      console.log('Enviando datos de actualización:', updateData);
-      
-      const response = await api.put(`/usuarios/${id}`, updateData);
-      return response.data;
-    } catch (error) {
-      console.error('Error al actualizar usuario:', error.response?.data);
-      if (error.message.startsWith('El ') || error.message.startsWith('La ')) {
-        throw error; // Re-lanzar errores de validación
-      }
-      
-      // Manejar errores específicos del servidor
-      if (error.response?.status === 422) {
-        const detail = error.response.data?.detail;
-        if (Array.isArray(detail)) {
-          const errorMessages = detail.map(err => `${err.loc?.join('.')}: ${err.msg}`).join(', ');
-          throw new Error(`Error de validación: ${errorMessages}`);
-        } else if (typeof detail === 'string') {
-          throw new Error(detail);
-        }
-        throw new Error('Error de validación en los datos enviados');
-      }
-      
-      throw new Error(error.response?.data?.detail || 'Error al actualizar usuario');
-    }
-  },
-
-  // Eliminar usuario
   eliminarUsuario: async (id) => {
     try {
       const response = await api.delete(`/usuarios/${id}`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.detail || 'Error al eliminar usuario');
-    }
-  },
-
-  // Verificar si el correo ya existe (para validaciones)
-  verificarCorreoExistente: async (correo, excludeId = null) => {
-    try {
-      const usuarios = await usuariosService.listarUsuarios();
-      return usuarios.some(usuario => 
-        usuario.correo.toLowerCase() === correo.toLowerCase() && 
-        (excludeId === null || usuario.id !== excludeId)
-      );
-    } catch (error) {
-      console.warn('Error al verificar correo:', error);
-      return false;
-    }
-  },
-
-  // Obtener estadísticas de usuarios
-  obtenerEstadisticas: async () => {
-    try {
-      const usuarios = await usuariosService.listarUsuarios();
-      return {
-        total: usuarios.length,
-        administradores: usuarios.filter(u => u.rol_id === 2).length,
-        moderadores: usuarios.filter(u => u.rol_id === 3).length,
-        usuarios: usuarios.filter(u => u.rol_id === 1).length
-      };
-    } catch (error) {
-      throw new Error('Error al obtener estadísticas');
-    }
-  },
-
-  // Buscar usuarios por término
-  buscarUsuarios: async (termino = '', rolId = null) => {
-    try {
-      const usuarios = await usuariosService.listarUsuarios();
-      
-      let resultado = usuarios;
-      
-      // Filtrar por término de búsqueda
-      if (termino.trim()) {
-        const terminoLower = termino.toLowerCase();
-        resultado = resultado.filter(usuario => 
-          usuario.nombre.toLowerCase().includes(terminoLower) ||
-          usuario.correo.toLowerCase().includes(terminoLower)
-        );
-      }
-      
-      // Filtrar por rol
-      if (rolId !== null && rolId !== '') {
-        resultado = resultado.filter(usuario => usuario.rol_id === parseInt(rolId));
-      }
-      
-      return resultado;
-    } catch (error) {
-      throw new Error('Error al buscar usuarios');
     }
   }
 };
