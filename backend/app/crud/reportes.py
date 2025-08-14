@@ -57,7 +57,7 @@ async def obtener_registro_huespedes(
     if fecha_fin:
         conditions.append(VistaRegistroHuespedes.fecha_fin <= fecha_fin)
     if documento_identidad:
-        conditions.append(VistaRegistroHuespedes.documento_identidad == documento_identidad)
+        conditions.append(VistaRegistroHuespedes.documento_identidad.ilike(f"%{documento_identidad}%"))
     if nombre_cliente:
         conditions.append(VistaRegistroHuespedes.cliente.ilike(f"%{nombre_cliente}%"))
     
@@ -86,7 +86,7 @@ async def obtener_registro_ocupacion(
     if fecha_fin:
         conditions.append(VistaRegistroOcupacion.fecha_fin <= fecha_fin)
     if numero_habitacion:
-        conditions.append(VistaRegistroOcupacion.habitacion == numero_habitacion)
+        conditions.append(VistaRegistroOcupacion.habitacion.ilike(f"%{numero_habitacion}%"))
     if tipo_habitacion:
         conditions.append(VistaRegistroOcupacion.tipo.ilike(f"%{tipo_habitacion}%"))
     
@@ -106,7 +106,7 @@ async def obtener_resumen_financiero(
 ) -> ResumenFinanciero:
     """Obtener resumen financiero con totales de ingresos y egresos"""
     
-    # Query para obtener totales y cantidades
+    # Query para obtener totales y cantidades de ingresos
     query_ingresos = text("""
         SELECT COALESCE(SUM(monto), 0) as total_ingresos,
                COUNT(*) as cantidad_ingresos
@@ -115,6 +115,7 @@ async def obtener_resumen_financiero(
         AND (:fecha_fin IS NULL OR fecha <= :fecha_fin)
     """)
     
+    # Query para obtener totales y cantidades de egresos
     query_egresos = text("""
         SELECT COALESCE(SUM(monto), 0) as total_egresos,
                COUNT(*) as cantidad_egresos
@@ -136,10 +137,11 @@ async def obtener_resumen_financiero(
     row_ingresos = result_ingresos.fetchone()
     row_egresos = result_egresos.fetchone()
     
-    total_ingresos = row_ingresos[0] if row_ingresos else Decimal('0')
-    cantidad_ingresos = row_ingresos[1] if row_ingresos else 0
-    total_egresos = row_egresos[0] if row_egresos else Decimal('0')
-    cantidad_egresos = row_egresos[1] if row_egresos else 0
+    # Manejo seguro de resultados
+    total_ingresos = Decimal(str(row_ingresos[0])) if row_ingresos and row_ingresos[0] is not None else Decimal('0')
+    cantidad_ingresos = row_ingresos[1] if row_ingresos and row_ingresos[1] is not None else 0
+    total_egresos = Decimal(str(row_egresos[0])) if row_egresos and row_egresos[0] is not None else Decimal('0')
+    cantidad_egresos = row_egresos[1] if row_egresos and row_egresos[1] is not None else 0
     
     saldo = total_ingresos - total_egresos
     
@@ -173,16 +175,18 @@ async def obtener_estadisticas_ocupacion(
     # Total de habitaciones
     query_total_habitaciones = select(func.count(Habitacion.id))
     result_total = await db.execute(query_total_habitaciones)
-    total_habitaciones = result_total.scalar()
+    total_habitaciones = result_total.scalar() or 0
     
-    # Query para reservas en el período
+    # Query para reservas en el período - Mejorada para evitar solapamientos
     query_reservas = text("""
         SELECT COUNT(*) as total_reservas,
                COUNT(DISTINCT habitacion_id) as habitaciones_ocupadas
         FROM reservas
         WHERE estado IN ('reservada', 'completada')
-        AND (:fecha_inicio IS NULL OR fecha_inicio >= :fecha_inicio)
-        AND (:fecha_fin IS NULL OR fecha_fin <= :fecha_fin)
+        AND (
+            (:fecha_inicio IS NULL OR fecha_fin >= :fecha_inicio) AND
+            (:fecha_fin IS NULL OR fecha_inicio <= :fecha_fin)
+        )
     """)
     
     result_reservas = await db.execute(
@@ -191,10 +195,11 @@ async def obtener_estadisticas_ocupacion(
     )
     
     row = result_reservas.fetchone()
-    total_reservas = row[0] if row else 0
-    habitaciones_ocupadas = row[1] if row else 0
+    total_reservas = row[0] if row and row[0] is not None else 0
+    habitaciones_ocupadas = row[1] if row and row[1] is not None else 0
     
-    habitaciones_disponibles = total_habitaciones - habitaciones_ocupadas
+    # Calcular estadísticas
+    habitaciones_disponibles = max(0, total_habitaciones - habitaciones_ocupadas)
     porcentaje_ocupacion = (habitaciones_ocupadas / total_habitaciones * 100) if total_habitaciones > 0 else 0
     
     # Determinar el periodo
@@ -214,3 +219,4 @@ async def obtener_estadisticas_ocupacion(
         porcentaje_ocupacion=round(porcentaje_ocupacion, 2),
         periodo=periodo
     )
+    
