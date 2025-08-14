@@ -66,12 +66,12 @@ function Header() {
             
             <li className="nav-item">
               <Link 
-                to="/usuarios" 
-                className={`nav-link ${isActive('/usuarios') ? 'active' : ''}`}
+                to="/clientes" 
+                className={`nav-link ${isActive('/clientes') ? 'active' : ''}`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">👥</span>
-                Usuarios
+                Clientes
               </Link>
             </li>
             
@@ -94,6 +94,17 @@ function Header() {
               >
                 <span className="nav-icon">📊</span>
                 Reportes
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link 
+                to="/usuarios" 
+                className={`nav-link ${isActive('/usuarios') ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="nav-icon">👥</span>
+                Usuarios
               </Link>
             </li>
           </ul>
