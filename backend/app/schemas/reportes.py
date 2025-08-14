@@ -65,6 +65,9 @@ class ResumenFinanciero(BaseModel):
     total_egresos: Decimal
     saldo: Decimal
     periodo: str
+    # Agregar estos campos que el frontend espera
+    cantidad_ingresos: int = 0
+    cantidad_egresos: int = 0
 
     class Config:
         json_encoders = {
