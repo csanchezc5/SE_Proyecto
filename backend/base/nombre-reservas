@@ -83,50 +83,72 @@ INSERT INTO cuentas (codigo, nombre, tipo, nivel) VALUES
 
 --Vistas para los Reportes
 
+-- Vista del Libro Diario 
 CREATE OR REPLACE VIEW vistadellibro_diario AS
+WITH libro_base AS (
+    SELECT 
+        fecha,
+        'Ingreso' AS tipo,
+        COALESCE(descripcion, 'Ingreso por reserva') AS descripcion,
+        monto
+    FROM ingresos
+    UNION ALL
+    SELECT 
+        fecha,
+        'Egreso' AS tipo,
+        COALESCE(descripcion, 'Egreso') AS descripcion,
+        monto
+    FROM egresos
+)
 SELECT 
+    ROW_NUMBER() OVER (ORDER BY fecha DESC, descripcion) AS id,
     fecha,
-    'Ingreso' AS tipo,
+    tipo,
     descripcion,
     monto
-FROM ingresos
-UNION ALL
-SELECT 
-    fecha,
-    'Egreso' AS tipo,
-    descripcion,
-    monto
-FROM egresos
-ORDER BY fecha;
+FROM libro_base
+ORDER BY fecha DESC, tipo;
 
-
+-- Vista del Registro de Huéspedes
 CREATE OR REPLACE VIEW vistadelregistro_huespedes AS
 SELECT 
-    c.nombre AS cliente,
-    c.documento_identidad,
+    ROW_NUMBER() OVER (ORDER BY r.fecha_inicio DESC, c.nombre) AS id,
+    COALESCE(c.nombre, 'Sin nombre') AS cliente,
+    COALESCE(c.documento_identidad, 'Sin documento') AS documento_identidad,
     c.correo,
     c.telefono,
     r.fecha_inicio,
     r.fecha_fin,
-    h.numero AS habitacion,
-    h.tipo AS tipo_habitacion,
-    r.estado AS estado_reserva
+    COALESCE(h.numero, 'Sin asignar') AS habitacion,
+    COALESCE(h.tipo, 'Sin tipo') AS tipo_habitacion,
+    COALESCE(r.estado, 'Sin estado') AS estado_reserva
 FROM reservas r
-JOIN clientes c ON r.cliente_id = c.id
-JOIN habitaciones h ON r.habitacion_id = h.id
-ORDER BY r.fecha_inicio;
+LEFT JOIN clientes c ON r.cliente_id = c.id
+LEFT JOIN habitaciones h ON r.habitacion_id = h.id
+ORDER BY r.fecha_inicio DESC;
 
-
+-- Vista del Registro de Ocupación
 CREATE OR REPLACE VIEW vistadelregistro_ocupacion AS
 SELECT 
-    h.numero AS habitacion,
-    h.tipo,
+    ROW_NUMBER() OVER (ORDER BY h.numero, r.fecha_inicio DESC) AS id,
+    COALESCE(h.numero, 'Sin número') AS habitacion,
+    COALESCE(h.tipo, 'Sin tipo') AS tipo,
     r.fecha_inicio,
     r.fecha_fin,
-    r.estado AS estado_reserva,
-    c.nombre AS cliente
+    COALESCE(r.estado, 'Sin estado') AS estado_reserva,
+    COALESCE(c.nombre, 'Sin cliente') AS cliente
 FROM reservas r
-JOIN habitaciones h ON r.habitacion_id = h.id
-JOIN clientes c ON r.cliente_id = c.id
-WHERE r.estado IN ('reservada', 'completada')
-ORDER BY h.numero, r.fecha_inicio;
+LEFT JOIN habitaciones h ON r.habitacion_id = h.id
+LEFT JOIN clientes c ON r.cliente_id = c.id
+WHERE r.estado IN ('reservada', 'completada', 'cancelada')
+ORDER BY h.numero, r.fecha_inicio DESC;
+
+-- Crear índices para mejorar el rendimiento
+CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos(fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_egresos_fecha ON egresos(fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_reservas_fechas ON reservas(fecha_inicio DESC, fecha_fin);
+CREATE INDEX IF NOT EXISTS idx_reservas_estado ON reservas(estado);
+CREATE INDEX IF NOT EXISTS idx_clientes_documento ON clientes(documento_identidad);
+CREATE INDEX IF NOT EXISTS idx_clientes_nombre ON clientes(nombre);
+CREATE INDEX IF NOT EXISTS idx_habitaciones_numero ON habitaciones(numero);
+CREATE INDEX IF NOT EXISTS idx_habitaciones_tipo ON habitaciones(tipo);
