@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException,Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.usuario import UsuarioCreate, Usuario, UsuarioCorreo
+from app.schemas.usuario import UsuarioCreate, Usuario, UsuarioCorreo, UsuarioUpdate  # Agregar UsuarioUpdate
 from app.crud import usuario as crud_usuario
 from app.database import get_async_session
 from typing import List
@@ -26,7 +26,6 @@ async def obtener_usuario(usuario_id: int, db: AsyncSession = Depends(get_async_
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
-# Corregido: cambiada la ruta para evitar conflicto con el endpoint anterior
 @router.get("/usuarios/por-correo/", response_model=Usuario, tags=["Usuarios"])
 async def obtener_usuario_correo(correo: EmailStr = Query(...), db: AsyncSession = Depends(get_async_session)):
     usuario = await crud_usuario.obtener_usuario_correo(db, correo)
@@ -35,10 +34,32 @@ async def obtener_usuario_correo(correo: EmailStr = Query(...), db: AsyncSession
     return usuario
 
 @router.put("/usuarios/{usuario_id}", response_model=Usuario, tags=["Usuarios"])
-async def actualizar_usuario(usuario_id: int, datos: UsuarioCreate, db: AsyncSession = Depends(get_async_session)):
+async def actualizar_usuario(
+    usuario_id: int, 
+    datos: UsuarioUpdate,  # ¡CAMBIADO! Usar UsuarioUpdate en lugar de UsuarioCreate
+    db: AsyncSession = Depends(get_async_session)
+):
+    """Actualizar usuario - solo los campos proporcionados serán actualizados"""
+    
+    # Verificar que el usuario existe
+    usuario_existente = await crud_usuario.obtener_usuario(db, usuario_id)
+    if not usuario_existente:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Verificar duplicado de correo si se está actualizando
+    if datos.correo:
+        usuario_con_correo = await crud_usuario.obtener_usuario_correo(db, datos.correo)
+        if usuario_con_correo and usuario_con_correo.id != usuario_id:
+            raise HTTPException(
+                status_code=409, 
+                detail="El correo electrónico ya está en uso por otro usuario"
+            )
+    
+    # Actualizar usuario
     actualizado = await crud_usuario.actualizar_usuario(db, usuario_id, datos)
     if not actualizado:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
     return actualizado
 
 @router.delete("/usuarios/{usuario_id}", tags=["Usuarios"])

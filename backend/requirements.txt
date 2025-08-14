@@ -4,7 +4,10 @@ sqlalchemy
 asyncpg
 alembic
 python-dotenv
-
+pydantic[email] 
+passlib[bcrypt]
+werkzeug
+bcrypt
 
 #comandos terminal
 
@@ -14,7 +17,7 @@ python-dotenv
 
 #INstalar dependencias
 #pip install -r requirements.txt
-#pip install pydantic[email]  
+
 #Levantar el servidor
 #uvicorn app.main:app --reload
 
