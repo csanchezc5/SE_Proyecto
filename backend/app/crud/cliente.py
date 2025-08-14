@@ -19,6 +19,14 @@ async def get_cliente(session: AsyncSession, cliente_id: int) -> Cliente | None:
     return result.scalar_one_or_none()
 
 
+# Nueva función para buscar por documento
+async def get_cliente_by_documento(session: AsyncSession, documento_identidad: str) -> Cliente | None:
+    result = await session.execute(
+        select(Cliente).where(Cliente.documento_identidad == documento_identidad)
+    )
+    return result.scalar_one_or_none()
+
+
 async def list_clientes(session: AsyncSession) -> list[Cliente]:
     result = await session.execute(select(Cliente))
     return result.scalars().all()
