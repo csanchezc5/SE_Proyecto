@@ -10,7 +10,6 @@
 
 **Sistema integral para la gestión completa de reservas hoteleras**
 
-[Demo Live](#) • [Documentación](#) • [Reportar Bug](../../issues) • [Solicitar Feature](../../issues)
 
 </div>
 
@@ -20,7 +19,6 @@
 
 - [📖 Descripción General](#-descripción-general)
 - [✨ Características Principales](#-características-principales)
-- [🚀 Demo](#-demo)
 - [🛠️ Tecnologías](#️-tecnologías)
 - [📦 Instalación](#-instalación)
 - [🎯 Uso](#-uso)
@@ -29,9 +27,6 @@
 - [🔌 API Reference](#-api-reference)
 - [🎨 Screenshots](#-screenshots)
 - [🧪 Testing](#-testing)
-- [🤝 Contribuir](#-contribuir)
-- [📄 Licencia](#-licencia)
-- [📞 Contacto](#-contacto)
 
 ---
 
@@ -182,7 +177,7 @@ cd frontend && npm start
 ```
 Frontend: http://localhost:3000
 Backend:  http://localhost:3001
-API Docs: http://localhost:3001/api-docs
+API Docs: http://localhost:3001/docs
 ```
 
 ---
@@ -251,7 +246,7 @@ Contador: contador@hotel.com / conta123
 └─────────────┘    └─────────────┘    └─────────────┘
                           │                   │
                           └─────────┬─────────┘
-                                   │
+                                    │
                             ┌─────────────┐
                             │   reservas  │
                             ├─────────────┤
@@ -462,101 +457,6 @@ cd frontend && npm test
 npm run test:coverage
 ```
 
-### **Colección de Postman**
-📎 [Descargar colección de Postman](./docs/Hotel-API.postman_collection.json)
 
----
-
-## 📊 Métricas del Proyecto
-
-<div align="center">
-
-![Lines of Code](https://img.shields.io/badge/Lines%20of%20Code-15K+-success?style=for-the-badge)
-![Components](https://img.shields.io/badge/React%20Components-25+-blue?style=for-the-badge)
-![API Endpoints](https://img.shields.io/badge/API%20Endpoints-30+-orange?style=for-the-badge)
-![Database Tables](https://img.shields.io/badge/DB%20Tables-8-purple?style=for-the-badge)
-
-</div>
-
----
-
-## 🤝 Contribuir
-
-¡Las contribuciones son bienvenidas! Por favor sigue estos pasos:
-
-1. **Fork** el proyecto
-2. **Crea** tu feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** al branch (`git push origin feature/AmazingFeature`)
-5. **Abre** un Pull Request
-
-### **Guidelines de Contribución**
-- Seguir las convenciones de código existentes
-- Escribir tests para nuevas funcionalidades
-- Actualizar documentación cuando sea necesario
-- Usar commits descriptivos
-
----
-
-## 🛣️ Roadmap
-
-### **Q1 2024**
-- [x] Sistema básico de reservas
-- [x] Gestión de clientes
-- [x] Interface moderna
-- [ ] Sistema de notificaciones
-
-### **Q2 2024**
-- [ ] App móvil (React Native)
-- [ ] Integración con APIs de pago
-- [ ] Analytics avanzado
-- [ ] Sistema de reviews
-
-### **Q3 2024**
-- [ ] IA para predicción de demanda
-- [ ] Integración con WhatsApp
-- [ ] Multi-idioma
-- [ ] API pública
-
----
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-```
-MIT License
-
-Copyright (c) 2024 Sistema de Reservas de Hoteles
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software")...
-```
-
----
-
-## 📞 Contacto
-
-<div align="center">
-
-**🏨 Sistema de Reservas de Hoteles**
-
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contacto@hotelreservas.com)
-[![Website](https://img.shields.io/badge/Website-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://hotelreservas.com)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/company/hotelreservas)
-
-**¿Te gusta el proyecto? ¡Dale una ⭐ si te parece útil!**
-
-</div>
-
----
-
-<div align="center">
-
-**Desarrollado con ❤️ por el equipo de desarrollo**
-
-![GitHub stars](https://img.shields.io/github/stars/tu-usuario/sistema-reservas-hotel?style=social)
-![GitHub forks](https://img.shields.io/github/forks/tu-usuario/sistema-reservas-hotel?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/tu-usuario/sistema-reservas-hotel?style=social)
 
 </div>
