@@ -56,25 +56,18 @@ El **Sistema de Reservas de Hoteles** es una aplicación web moderna y completa 
 
 </div>
 
-### 🔥 **Funcionalidades Destacadas**
+### **Funcionalidades Destacadas**
 
-- ✅ **Dashboard Interactivo** con métricas en tiempo real
-- ✅ **Sistema de Reservas Inteligente** con validación de disponibilidad
-- ✅ **Gestión Completa de Clientes** con historial
-- ✅ **Facturación Automática** y control de pagos
-- ✅ **Reportes Avanzados** con exportación a Excel/PDF
-- ✅ **Interface Moderna y Responsive** para todos los dispositivos
-- ✅ **Sistema de Usuarios y Roles** con diferentes niveles de acceso
-- ✅ **API RESTful** completamente documentada
+- **Dashboard Interactivo** con métricas en tiempo real
+- **Sistema de Reservas Inteligente** con validación de disponibilidad
+- **Gestión Completa de Clientes** con historial
+- **Facturación Automática** y control de pagos
+- **Reportes Avanzados** con exportación a Excel/PDF
+- **Interface Moderna y Responsive** para todos los dispositivos
+- **Sistema de Usuarios y Roles** con diferentes niveles de acceso
+- **API RESTful** completamente documentada
 
 ---
-
-## 🚀 Demo
-
-<div align="center">
-
-### 🌐 **[Ver Demo en Vivo](https://tu-demo-url.com)** 
-*(Usuario: demo@hotel.com | Password: demo123)*
 
 </div>
 
