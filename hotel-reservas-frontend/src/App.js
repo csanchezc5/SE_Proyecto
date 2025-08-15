@@ -22,7 +22,7 @@ function App() {
           <Route path="/reservas" element={<Reservas />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/usuarios" element={<Usuarios />} />
-          <Route path="/facturacion" element={<Facturacion />} />
+          <Route path="/facturacion" element={<Facturacion />} /> 
         </Routes>
       </div>
     </Router>
