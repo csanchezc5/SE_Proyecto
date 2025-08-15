@@ -9,7 +9,6 @@
 
 **Sistema integral para la gestión completa de reservas hoteleras**
 
-
 </div>
 
 ---
@@ -23,8 +22,6 @@
 - [🎯 Uso](#-uso)
 - [👥 Equipo de Desarrollo](#-equipo-de-desarrollo)
 - [🗄️ Base de Datos](#️-base-de-datos)
-- [🔌 API Reference](#-api-reference)
-- [🎨 Screenshots](#-screenshots)
 - [🧪 Testing](#-testing)
 
 ---
@@ -95,14 +92,6 @@ El **Sistema de Reservas de Hoteles** es una aplicación web moderna y completa 
   "validation": "Joi"
 }
 ```
-
-### **Herramientas de Desarrollo**
-![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
-![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=flat&logo=visual-studio-code&logoColor=white)
-![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat&logo=postman&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)
-
----
 
 ## 📦 Instalación
 
@@ -214,7 +203,7 @@ Contador: contador@hotel.com / conta123
 
 | Desarrollador | Módulo | 
 |:---:|:---:|:---:|:---:|
-| **Cristhian Sanchez** | Usuarios & Auth |
+| **Cristian Sanchez** | Usuarios & Auth |
 | **Ivan Hernandez** | Clientes | 
 | **Sulay Vergara** | Habitaciones & Reservas |
 | **David Tunja** | Facturación | 
