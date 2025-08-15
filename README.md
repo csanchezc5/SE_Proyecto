@@ -1,4 +1,3 @@
-# Sistema de Reservas de Hoteles
 # 🏨 Sistema de Reservas de Hoteles
 
 <div align="center">
