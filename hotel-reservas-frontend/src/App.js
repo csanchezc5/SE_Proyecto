@@ -7,7 +7,6 @@ import Reportes from './pages/Reportes';
 import Usuarios from './pages/Usuarios';
 import Reservas from './pages/Reservas';
 import Clientes from './pages/Clientes';
-import Facturacion from './components/Facturacion/Facturacion';
 import './App.css';
 
 function App() {
