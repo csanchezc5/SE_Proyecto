@@ -202,7 +202,7 @@ Contador: contador@hotel.com / conta123
 <div align="center">
 
 | Desarrollador | Módulo | 
-|:---:|:---:|:---:|:---:|
+|:---:|:---:|
 | **Cristian Sanchez** | Usuarios & Auth |
 | **Ivan Hernandez** | Clientes | 
 | **Sulay Vergara** | Habitaciones & Reservas |
