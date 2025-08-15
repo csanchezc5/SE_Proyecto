@@ -214,11 +214,11 @@ Contador: contador@hotel.com / conta123
 
 | Desarrollador | Módulo | GitHub | LinkedIn |
 |:---:|:---:|:---:|:---:|
-| **Cristhian Sanchez** | Usuarios & Auth | [@cristhian](https://github.com/cristhian) | [LinkedIn](https://linkedin.com/in/cristhian) |
-| **Ivan Hernandez** | Clientes | [@ivan](https://github.com/ivan) | [LinkedIn](https://linkedin.com/in/ivan) |
-| **Sulay Vergara** | Habitaciones & Reservas | [@sulay](https://github.com/sulay) | [LinkedIn](https://linkedin.com/in/sulay) |
-| **David Tunja** | Facturación | [@david](https://github.com/david) | [LinkedIn](https://linkedin.com/in/david) |
-| **Joel Mazzini** | Reportes | [@joel](https://github.com/joel) | [LinkedIn](https://linkedin.com/in/joel) |
+| **Cristhian Sanchez** | Usuarios & Auth |
+| **Ivan Hernandez** | Clientes | 
+| **Sulay Vergara** | Habitaciones & Reservas |
+| **David Tunja** | Facturación | 
+| **Joel Mazzini** | Reportes |
 
 </div>
 
@@ -313,13 +313,6 @@ CREATE TABLE reservas (
 </details>
 
 ---
-
-## 🔌 API Reference
-
-### **Base URL**
-```
-http://localhost:3001/api
-```
 
 ### **Autenticación**
 ```http
