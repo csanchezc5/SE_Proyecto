@@ -107,6 +107,17 @@ function Header() {
                 Usuarios
               </Link>
             </li>
+
+            <li className="nav-item">
+              <Link 
+                to="/facturas" 
+                className={`nav-link ${isActive('/facturas') ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="nav-icon">🧾</span>
+                Facturas
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
