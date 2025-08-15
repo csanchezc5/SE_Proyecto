@@ -169,7 +169,8 @@ cd frontend && npm start
 ```
 Frontend: http://localhost:3000
 Backend:  http://localhost:3001
-API Docs: http://localhost:3001/docs
+Swagger UI: http://localhost:3001/docs
+
 ```
 
 ---
@@ -211,7 +212,7 @@ Contador: contador@hotel.com / conta123
 
 <div align="center">
 
-| Desarrollador | Módulo | GitHub | LinkedIn |
+| Desarrollador | Módulo | 
 |:---:|:---:|:---:|:---:|
 | **Cristhian Sanchez** | Usuarios & Auth |
 | **Ivan Hernandez** | Clientes | 
@@ -411,23 +412,6 @@ PUT /reservas/{id}/cancelar
 
 ---
 
-## 🎨 Screenshots
-
-<div align="center">
-
-### **Dashboard Principal**
-![Dashboard](https://via.placeholder.com/800x400/667eea/ffffff?text=Dashboard+Principal)
-
-### **Gestión de Reservas**
-![Reservas](https://via.placeholder.com/800x400/4facfe/ffffff?text=Gestion+de+Reservas)
-
-### **Lista de Clientes**
-![Clientes](https://via.placeholder.com/800x400/764ba2/ffffff?text=Lista+de+Clientes)
-
-</div>
-
----
-
 ## 🧪 Testing
 
 ### **Ejecutar Tests**
@@ -441,7 +425,4 @@ cd frontend && npm test
 # Coverage
 npm run test:coverage
 ```
-
-
-
 </div>
